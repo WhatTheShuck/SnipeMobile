@@ -159,7 +159,7 @@ struct ContentView: View {
                 auditListFilter: $auditListFilter,
                 hardwareSubtab: $hardwareSubtab,
                 showTodayOnlyOverride: $showTodayOnlyOverride,
-                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t; hardwarePath = NavigationPath() } },
+                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t } },
                 onOpenUser: { u in pendingUserToOpen = u; usersPath.append(u); selectedTab = .users; returnToTab = .hardware },
                 onOpenLocation: { pendingLocationToOpen = $0; selectedTab = .locations; returnToTab = .hardware }
             )
@@ -178,7 +178,7 @@ struct ContentView: View {
                 isDetailViewActive: $isDetailViewActive,
                 pendingAccessoryToOpen: $pendingAccessoryToOpen,
                 returnToTab: $returnToTab,
-                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t; accessoriesPath = NavigationPath() } },
+                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t } },
                 onOpenUser: { u in pendingUserToOpen = u; usersPath.append(u); selectedTab = .users; returnToTab = .accessories },
                 onOpenAsset: { pendingAssetToOpen = $0; selectedTab = .hardware; returnToTab = .accessories },
                 onOpenLocation: { pendingLocationToOpen = $0; selectedTab = .locations; returnToTab = .accessories }
@@ -198,7 +198,7 @@ struct ContentView: View {
                 isDetailViewActive: $isDetailViewActive,
                 pendingUserToOpen: $pendingUserToOpen,
                 returnToTab: $returnToTab,
-                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t; usersPath = NavigationPath() } },
+                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t } },
                 onOpenAsset: { pendingAssetToOpen = $0; selectedTab = .hardware; returnToTab = .users },
                 onOpenAccessory: { pendingAccessoryToOpen = $0; selectedTab = .accessories; returnToTab = .users },
                 onOpenLocation: { pendingLocationToOpen = $0; selectedTab = .locations; returnToTab = .users }
@@ -218,7 +218,7 @@ struct ContentView: View {
                 isDetailViewActive: $isDetailViewActive,
                 pendingLocationToOpen: $pendingLocationToOpen,
                 returnToTab: $returnToTab,
-                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t; locationsPath = NavigationPath() } },
+                onBackToPreviousTab: { if let t = returnToTab { selectedTab = t } },
                 onOpenUser: { u in pendingUserToOpen = u; usersPath.append(u); selectedTab = .users; returnToTab = .locations },
                 onOpenAsset: { pendingAssetToOpen = $0; selectedTab = .hardware; returnToTab = .locations }
             )
@@ -237,7 +237,14 @@ struct ContentView: View {
             // returnToTab is cleared here (not in the callback) so this guard
             // can still see it — the callback clears it in the same batch as
             // selectedTab, which would have made the guard always pass through.
-            guard returnToTab == nil else { returnToTab = nil; return }
+            guard returnToTab == nil else {
+                // newTab == returnToTab means we're navigating back to the origin tab;
+                // clear the flag but leave the origin tab's path intact.
+                // newTab != returnToTab means we're navigating forward into the detail tab;
+                // keep the flag so the custom back button remains visible.
+                if newTab == returnToTab { returnToTab = nil }
+                return
+            }
             if !awaitingAuditNavigationResolution {
                 auditListFilter = .all
                 showTodayOnlyOverride = false
