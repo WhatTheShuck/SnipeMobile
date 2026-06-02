@@ -29,6 +29,15 @@ iOS app to manage [Snipe-IT](https://snipeitapp.com) assets, accessories, users,
 - **Security**: optional Face ID / Touch ID on app open.
 - **iCloud**: settings (including API configuration) can sync via iCloud.
 
+## Contributing
+
+1. Fork the repo and clone your fork.
+2. Open `SnipeMobile.xcodeproj` in Xcode.
+3. In the **Signing & Capabilities** tab, set your Apple Developer **Team** and update the **Bundle Identifier** to one you own (e.g. `com.yourname.snipemobile`).
+4. If you want to test iCloud sync, re-add the iCloud capability after changing the bundle ID so Xcode creates a new container under your account.
+
+The `DEVELOPMENT_TEAM` is intentionally left blank in the project file — each contributor sets their own via Xcode's Signing & Capabilities tab.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
